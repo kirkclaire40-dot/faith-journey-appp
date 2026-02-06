@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faith Journey App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+    <!-- Add some simple custom styles for the gradient backgrounds -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+      // Import React and ReactDOM from a CDN
+      import React, { useState } from 'https://cdn.skypack.dev/react@18';
+      import ReactDOM from 'https://cdn.skypack.dev/react-dom@18';
+      // Import needed icons from lucide-react via CDN
+      // Note: We removed lucide-react dependency to avoid module loading issues when running from file://.
+      // Instead, we'll use simple emoji strings for icons.
+
+      const FaithJourneyApp = () => {
+        const [activeTab, setActiveTab] = useState('home');
+        const [completedTasks, setCompletedTasks] = useState([]);
+        const [chatMessages, setChatMessages] = useState([
+          {
+            role: 'assistant',
+            text: "Hello! I'm Faith Friend! 🌟 I'm here to help you grow closer to God. What would you like to learn about today?",
+          },
+        ]);
+        const [userInput, setUserInput] = useState('');
+
+        const weeklyTasks = [
+          { id: 1, task: 'Read a Bible story with your family', icon: '📖', completed: false },
+          { id: 2, task: 'Say a prayer of thanks before each meal', icon: '🙏', completed: false },
+          { id: 3, task: 'Do something kind for someone', icon: '💝', completed: false },
+          { id: 4, task: 'Learn a Bible verse by heart', icon: '⭐', completed: false },
+          { id: 5, task: 'Talk to God about your day', icon: '💬', completed: false },
+        ];
+
+        const stories = [
+          {
+            title: "God's Amazing Love",
+            image: '☀️',
+            content:
+              'God loves you SO much! Before you were even born, God knew you and had a special plan for your life. Just like a parent loves their child, God loves you even more! Nothing you do can make God stop loving you.',
+            verse: 'For God so loved the world that he gave his one and only Son. - John 3:16',
+          },
+          {
+            title: "Jesus' Great Sacrifice",
+            image: '✝️',
+            content:
+              'Jesus did something incredible for us! He came to Earth as a baby, lived a perfect life, and then made the biggest sacrifice ever. He gave His life so that we could be friends with God forever. That's how much you mean to Him!',
+            verse: 'Greater love has no one than this: to lay down one\'s life for one\'s friends. - John 15:13',
+          },
+          {
+            title: 'God Has a Plan for YOU!',
+            image: '🌟',
+            content:
+              'Did you know God has an amazing plan just for you? Before you were born, God thought about all the wonderful things you would do! He made you special and unique. Your life has purpose and meaning because God created you for something beautiful!',
+            verse: 'For I know the plans I have for you, declares the Lord, plans to prosper you. - Jeremiah 29:11',
+          },
+          {
+            title: 'Choosing Good Over Wrong',
+            image: '⚖️',
+            content:
+              "Sometimes we make mistakes - that's called sin. Sin is when we don't follow God's good ways. But here's the good news: when we say sorry to God, He always forgives us! God wants us to choose what's right because He knows it makes us happy and keeps us safe.",
+            verse: 'If we confess our sins, he is faithful and just and will forgive us. - 1 John 1:9',
+          },
+        ];
+
+        const quizQuestions = [
+          {
+            question: 'How much does God love you?',
+            options: ['A little bit', "Only when I'm good", 'SO MUCH - more than anything!', "I don't know"],
+            correct: 2,
+            explanation: "God's love for you is bigger than the universe! Nothing can separate you from His love.",
+          },
+          {
+            question: 'What did Jesus do for us?',
+            options: ['Made us breakfast', 'Gave His life to save us', 'Built a house', 'Wrote a book'],
+            correct: 1,
+            explanation: 'Jesus made the ultimate sacrifice by giving His life so we could be with God forever!',
+          },
+          {
+            question: 'Does God have a plan for your life?',
+            options: ['No, life is random', "Maybe, I'm not sure", 'Yes! God has an amazing plan for me!', 'Only for grown-ups'],
+            correct: 2,
+            explanation:
+              'God created you with purpose! He has wonderful plans for your life, and He\'s with you every step of the way.',
+          },
+        ];
+
+        const [currentQuiz, setCurrentQuiz] = useState(0);
+        const [quizAnswer, setQuizAnswer] = useState(null);
+        const [showExplanation, setShowExplanation] = useState(false);
+
+        const toggleTask = (taskId) => {
+          if (completedTasks.includes(taskId)) {
+            setCompletedTasks(completedTasks.filter((id) => id !== taskId));
+          } else {
+            setCompletedTasks([...completedTasks, taskId]);
+          }
+        };
+
+        const handleQuizAnswer = (index) => {
+          setQuizAnswer(index);
+          setShowExplanation(true);
+        };
+
+        const nextQuiz = () => {
+          setCurrentQuiz((currentQuiz + 1) % quizQuestions.length);
+          setQuizAnswer(null);
+          setShowExplanation(false);
+        };
+
+        const handleChatSubmit = (e) => {
+          e.preventDefault();
+          if (!userInput.trim()) return;
+
+          const newMessages = [...chatMessages, { role: 'user', text: userInput }];
+
+          // Simple faith companion responses
+          let response =
+            "That's a wonderful question! Remember, God is always with you and loves you very much. 💛";
+
+          const lowerInput = userInput.toLowerCase();
+          if (lowerInput.includes('pray') || lowerInput.includes('prayer')) {
+            response =
+              'Prayer is talking to God! You can pray anytime, anywhere. Just tell God what\'s in your heart - your thanks, your worries, your joys. He always listens! 🙏✨';
+          } else if (lowerInput.includes('jesus')) {
+            response =
+              "Jesus is God's son and our best friend! He came to Earth to show us God's love and to save us. Jesus loves you so much! ✝️💕";
+          } else if (lowerInput.includes('sin') || lowerInput.includes('wrong')) {
+            response =
+              'We all make mistakes sometimes. When we do something wrong, we can say sorry to God and He ALWAYS forgives us! Then we can try again to make good choices. 🌈';
+          } else if (lowerInput.includes('love')) {
+            response =
+              "God's love for you is bigger than the sky, deeper than the ocean, and stronger than anything! Nothing can ever separate you from God's love. 💖🌟";
+          } else if (lowerInput.includes('plan') || lowerInput.includes('purpose')) {
+            response =
+              'God has an amazing plan for your life! He made you special and unique. Every day is part of His beautiful plan for you. Keep trusting Him! 🎯✨';
+          }
+
+          newMessages.push({ role: 'assistant', text: response });
+          setChatMessages(newMessages);
+          setUserInput('');
+        };
+
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-yellow-300 p-4">
+            <div className="max-w-4xl mx-auto">
+              {/* Header */}
+              <div className="bg-white/90 backdrop-blur rounded-3xl shadow-2xl p-6 mb-6 text-center border-4 border-yellow-400">
+                <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
+                  God's Journey ✨
+                </h1>
+                <p className="text-purple-700 font-semibold">Growing Closer to God Every Day!</p>
+              </div>
+
+              {/* Navigation */}
+              <div className="grid grid-cols-4 gap-2 mb-6">
+                {[
+                  { id: 'home', icon: '☀️', label: 'Home' },
+                  { id: 'stories', icon: '📖', label: 'Stories' },
+                  { id: 'tasks', icon: '⭐', label: 'Tasks' },
+                  { id: 'chat', icon: '💬', label: 'Chat' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`p-4 rounded-2xl font-bold transition-all transform hover:scale-105 ${
+                      activeTab === tab.id
+                        ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white shadow-lg'
+                        : 'bg-white/80 text-purple-600'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-xl">{tab.icon}</span>
+                      <span className="text-xs">{tab.label}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Content Area */}
+              <div className="bg-white/90 backdrop-blur rounded-3xl shadow-2xl p-6 border-4 border-pink-300">
+                {activeTab === 'home' && (
+                  <div className="space-y-6">
+                    <div className="text-center">
+                      <div className="text-6xl mb-4">🌈</div>
+                      <h2 className="text-3xl font-bold text-purple-700 mb-4">Welcome to God's Journey!</h2>
+                      <p className="text-lg text-gray-700 mb-6">
+                        You are loved by God more than you can imagine! Let's learn about His amazing love, Jesus' sacrifice, and the wonderful plan He has for YOU!
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gradient-to-br from-blue-400 to-purple-500 p-6 rounded-2xl text-white shadow-lg">
+                        <div className="text-4xl mb-3">💝</div>
+                        <h3 className="text-xl font-bold mb-2">God's Endless Love</h3>
+                        <p>God loves you SO much! Nothing can separate you from His love.</p>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-pink-400 to-red-500 p-6 rounded-2xl text-white shadow-lg">
+                        <div className="text-4xl mb-3">✝️</div>
+                        <h3 className="text-xl font-bold mb-2">Jesus Saves Us</h3>
+                        <p>Jesus gave His life to save us because we mean everything to Him!</p>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-green-400 to-teal-500 p-6 rounded-2xl text-white shadow-lg">
+                        <div className="text-4xl mb-3">🌟</div>
+                        <h3 className="text-xl font-bold mb-2">You Have Purpose</h3>
+                        <p>God has an amazing plan for your life. You are special and unique!</p>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-6 rounded-2xl text-white shadow-lg">
+                        <div className="text-4xl mb-3">🙏</div>
+                        <h3 className="text-xl font-bold mb-2">Choose What's Right</h3>
+                        <p>When we follow God's ways, we find true happiness and peace!</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-purple-200 to-pink-200 p-6 rounded-2xl text-center">
+                        <span className="w-12 h-12 mx-auto mb-3 text-4xl block">✨</span>
+                      <p className="text-lg font-semibold text-purple-800">
+                        "You are fearfully and wonderfully made!" - Psalm 139:14
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'stories' && (
+                  <div className="space-y-6">
+                    <h2 className="text-3xl font-bold text-purple-700 text-center mb-6">Faith Stories 📖</h2>
+                    {stories.map((story, index) => (
+                      <div key={index} className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-2xl border-3 border-purple-300 shadow-lg">
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className="text-5xl">{story.image}</div>
+                          <h3 className="text-2xl font-bold text-purple-700">{story.title}</h3>
+                        </div>
+                        <p className="text-gray-800 text-lg mb-4 leading-relaxed">{story.content}</p>
+                        <div className="bg-yellow-100 p-4 rounded-xl border-2 border-yellow-400">
+                          <p className="text-purple-800 font-semibold italic">📜 {story.verse}</p>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Quiz Section */}
+                    <div className="bg-gradient-to-br from-green-400 to-blue-500 p-6 rounded-2xl text-white shadow-lg">
+                      <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                        <span className="text-2xl mr-2">⭐</span> Test Your Knowledge!
+                      </h3>
+                      <div className="bg-white p-6 rounded-xl text-gray-800">
+                        <p className="text-xl font-bold mb-4">{quizQuestions[currentQuiz].question}</p>
+                        <div className="space-y-3">
+                            {quizQuestions[currentQuiz].options.map((option, index) => (
+                            <button
+                              key={index}
+                              onClick={() => handleQuizAnswer(index)}
+                              disabled={showExplanation}
+                              className={`w-full p-4 rounded-xl font-semibold transition-all text-left ${
+                                showExplanation
+                                  ? index === quizQuestions[currentQuiz].correct
+                                    ? 'bg-green-400 text-white'
+                                    : index === quizAnswer
+                                    ? 'bg-red-300'
+                                    : 'bg-gray-200'
+                                  : 'bg-purple-100 hover:bg-purple-200'
+                              }`}
+                            >
+                              {option}
+                            </button>
+                          ))}
+                        </div>
+                        {showExplanation && (
+                          <div className="mt-4 space-y-3">
+                            <div className="bg-green-100 p-4 rounded-xl border-2 border-green-400">
+                              <p className="font-semibold text-green-800">
+                                ✨ {quizQuestions[currentQuiz].explanation}
+                              </p>
+                            </div>
+                            <button
+                              onClick={nextQuiz}
+                              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-xl font-bold hover:shadow-lg transition-all"
+                            >
+                              Next Question →
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'tasks' && (
+                  <div className="space-y-6">
+                    <div className="text-center mb-6">
+                      <h2 className="text-3xl font-bold text-purple-700 mb-2">Weekly Faith Tasks ⭐</h2>
+                      <p className="text-gray-700">Complete these tasks to grow closer to God!</p>
+                      <div className="mt-4 bg-gradient-to-r from-yellow-300 to-orange-300 p-4 rounded-2xl inline-block">
+                        <p className="text-2xl font-bold text-purple-800">
+                          {completedTasks.length} / {weeklyTasks.length} Completed! 🎉
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {weeklyTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          onClick={() => toggleTask(task.id)}
+                          className={`p-6 rounded-2xl cursor-pointer transition-all transform hover:scale-102 ${
+                            completedTasks.includes(task.id)
+                              ? 'bg-gradient-to-r from-green-400 to-teal-400 text-white shadow-lg'
+                              : 'bg-gradient-to-r from-purple-100 to-pink-100 hover:shadow-md'
+                          }`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="text-4xl">{task.icon}</div>
+                            <div className="flex-1">
+                              <p
+                                className={`text-lg font-semibold ${
+                                  completedTasks.includes(task.id) ? 'text-white' : 'text-purple-800'
+                                }`}
+                              >
+                                {task.task}
+                              </p>
+                            </div>
+                            {completedTasks.includes(task.id) && (
+                              <span className="text-2xl">✔️</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {completedTasks.length === weeklyTasks.length && (
+                      <div className="bg-gradient-to-r from-yellow-400 to-orange-400 p-6 rounded-2xl text-center text-white shadow-lg animate-bounce">
+                        <span className="text-4xl mx-auto mb-3 block">✨</span>
+                        <p className="text-2xl font-bold">Amazing! You completed all your tasks! 🌟</p>
+                        <p className="text-lg">God is so proud of you!</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'chat' && (
+                  <div className="space-y-4">
+                    <div className="text-center mb-4">
+                      <h2 className="text-3xl font-bold text-purple-700 mb-2">Faith Friend Chat 💬</h2>
+                      <p className="text-gray-700">Ask me anything about God, Jesus, or faith!</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 h-96 overflow-y-auto space-y-3 border-3 border-purple-300">
+                      {chatMessages.map((msg, index) => (
+                        <div
+                          key={index}
+                          className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-xs p-4 rounded-2xl ${
+                              msg.role === 'user'
+                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                                : 'bg-white text-gray-800 shadow-md border-2 border-yellow-300'
+                            }`}
+                          >
+                            <p className="leading-relaxed">{msg.text}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <form onSubmit={handleChatSubmit} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={userInput}
+                        onChange={(e) => setUserInput(e.target.value)}
+                        placeholder="Type your question here..."
+                        className="flex-1 p-4 rounded-2xl border-3 border-purple-300 focus:outline-none focus:border-purple-500"
+                      />
+                      <button
+                        type="submit"
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg transition-all"
+                      >
+                        Send ✨
+                      </button>
+                    </form>
+
+                    <div className="bg-gradient-to-r from-yellow-100 to-pink-100 p-4 rounded-2xl border-2 border-yellow-400">
+                      <p className="text-center text-purple-800 font-semibold">
+                        💡 Try asking: "How do I pray?", "Tell me about Jesus", or "What is God's plan for me?"
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="mt-6 text-center">
+                <div className="bg-white/80 backdrop-blur rounded-2xl p-4 inline-block">
+                  <p className="text-purple-700 font-bold">
+                    ✨ You are loved! You are special! God has amazing plans for you! ✨
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<FaithJourneyApp />);
+    </script>
+  </body>
+</html>
